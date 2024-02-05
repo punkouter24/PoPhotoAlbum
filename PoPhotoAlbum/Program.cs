@@ -11,7 +11,7 @@ using PoPhotoAlbum.Data;
 var builder = WebApplication.CreateBuilder(args);
 
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var connectionString = builder.Configuration.GetConnectionString("SqliteConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
      options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
