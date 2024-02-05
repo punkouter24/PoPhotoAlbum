@@ -1,0 +1,89 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Components.Authorization
+@using PoPhotoAlbum.Models
+@inject IPhotoService PhotoService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
+
+
+<MudGrid>
+    <MudButton OnClick="@OpenFileDialog">Upload Photo</MudButton>
+    <InputFile OnChange="@OnInputFileChange" style="display:none;" />
+
+    @foreach (var photo in photos)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudCard>
+                <MudCardMedia Image="@photo.Url" />
+                <MudCardContent>
+                    <MudText Typo="Typo.h6">@photo.FileName</MudText>
+                    </MudCardContent>
+                    <MudCardActions>
+                        <MudButton Color="Color.Error" OnClick="() => DeletePhoto(photo)">Delete</MudButton>
+                    </MudCardActions>
+                </MudCard>
+            </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private List<Photo> photos = new List<Photo>();
+    private ElementReference fileInputElement;
+    private string UserId;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            UserId = user.FindFirst(c => c.Type.Contains("nameidentifier"))?.Value;
+            // UserId = user.FindFirst(c => c.Type.Equals("sub") || c.Type.Equals(ClaimTypes.NameIdentifier))?.Value;
+            photos = await PhotoService.GetPhotosByUserId(UserId);
+        }
+    }
+
+    private async Task DeletePhoto(Photo photo)
+    {
+        await PhotoService.DeletePhotoAsync(photo.PhotoId);
+        photos.Remove(photo);
+    }
+
+    private async Task OnInputFileChange(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            // Check file size (limit to 100MB)
+            if (file.Size > 104857600)
+            {
+                // Handle file size exceeded error
+                return;
+            }
+
+            using var stream = file.OpenReadStream();
+            await PhotoService.UploadPhotoAsync(stream, file.Name, UserId);
+        }
+    }
+
+    private async Task OpenFileDialog()
+    {
+        await JSRuntime.InvokeVoidAsync("interop.openFileDialog");
+    }
+
+    private async Task GetCurrentUserInfo()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            // User is authenticated
+            var userName = user.Identity.Name;
+            // Other user info...
+        }
+    }
+}
+
