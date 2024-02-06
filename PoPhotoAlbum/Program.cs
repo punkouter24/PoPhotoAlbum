@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Azure;
 using MudBlazor.Services;
+using PoPhotoAlbum;
 using PoPhotoAlbum.Components;
 using PoPhotoAlbum.Components.Account;
 using PoPhotoAlbum.Data;
