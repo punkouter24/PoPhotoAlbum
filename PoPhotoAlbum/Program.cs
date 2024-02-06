@@ -51,7 +51,7 @@ Console.WriteLine(testString);
 
 builder.Services.AddAzureClients(clientBuilder =>
 {
-    clientBuilder.AddBlobServiceClient(builder.Configuration["AzureBlobStorage:ConnectionString"]);
+    clientBuilder.AddBlobServiceClient(testString);
 });
 
 builder.Services.AddMudServices();
