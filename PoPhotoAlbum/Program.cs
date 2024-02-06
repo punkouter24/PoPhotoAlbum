@@ -6,7 +6,7 @@ using MudBlazor.Services;
 using PoPhotoAlbum.Components;
 using PoPhotoAlbum.Components.Account;
 using PoPhotoAlbum.Data;
-
+using Microsoft.AspNetCore.Components.Server.Circuits;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,6 +61,16 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 builder.Services.AddServerSideBlazor(options => options.DetailedErrors = true);
 builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
+// builder.Services.AddSignalR(e =>
+//   {
+//       e.MaximumReceiveMessageSize = 1024000; // Set the limit here (in bytes)
+//   });
+
+
+// builder.Services.AddServerSideBlazor(options =>
+// {
+//     options.MaximumReceiveMessageSize = 4 * 1024 * 1024; // 4MB
+// });
 
 
 

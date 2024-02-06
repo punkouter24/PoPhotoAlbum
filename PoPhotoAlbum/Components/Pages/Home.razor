@@ -59,11 +59,10 @@
             // Check file size (limit to 100MB)
             if (file.Size > 104857600)
             {
-                // Handle file size exceeded error
                 return;
             }
 
-            using var stream = file.OpenReadStream();
+            using var stream = file.OpenReadStream(104857600);
             await PhotoService.UploadPhotoAsync(stream, file.Name, UserId);
         }
     }
