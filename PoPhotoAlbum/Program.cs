@@ -6,7 +6,6 @@ using MudBlazor.Services;
 using PoPhotoAlbum.Components;
 using PoPhotoAlbum.Components.Account;
 using PoPhotoAlbum.Data;
-using Microsoft.AspNetCore.Components.Server.Circuits;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -59,6 +58,9 @@ builder.Services.AddScoped<IPhotoService, PhotoService>();
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
 builder.Services.AddServerSideBlazor(options => options.DetailedErrors = true);
+
+var aiConnString = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
+Console.WriteLine("asConnString" + aiConnString);
 builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]);
 
 // builder.Services.AddSignalR(e =>
@@ -75,10 +77,6 @@ builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPLICAT
 
 
 var app = builder.Build();
-
-
-
-
 
 
 
@@ -106,6 +104,19 @@ app.MapRazorComponents<App>()
 app.MapAdditionalIdentityEndpoints();
 
 app.Run();
+
+
+
+
+
+
+  // "AzureBlobStorage": {
+  //   "ConnectionString": "DefaultEndpointsProtocol=https;AccountName=pophotoalbum;AccountKey=uwZ5K2Fw6EwdzGFWoNW6X3rSQOcXA5/W2sn0bttWRXa3k2VAbBBErK+V7NhGU7iDrkowbyZM832n+ASt+oA7og==;EndpointSuffix=core.windows.net",
+  //   "ContainerName": "pophotoalbum"
+  // },
+  // "ApplicationInsights": {
+  //   "ConnectionString": "InstrumentationKey=24d6ffe6-4de4-4021-a4e9-279213aac119;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/"
+  // }
 
 
 

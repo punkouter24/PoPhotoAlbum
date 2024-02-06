@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.EntityFrameworkCore;
 using PoPhotoAlbum.Data;
 using PoPhotoAlbum.Models;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 public interface IPhotoService
 {
-    Task UploadPhotoAsync(Stream fileStream, string fileName, string userId);
+    Task<Photo> UploadPhotoAsync(Stream fileStream, string fileName, string userId);
     Task DeletePhotoAsync(int photoId);
     Task<List<Photo>> GetPhotosByUserId(string userId);
 }
@@ -32,11 +33,15 @@ public class PhotoService : IPhotoService
                              .ToListAsync();
     }
 
-    public async Task UploadPhotoAsync(Stream fileStream, string fileName, string userId)
+    public async Task<Photo> UploadPhotoAsync(Stream fileStream, string fileName, string userId)
     {
         var containerClient = _blobServiceClient.GetBlobContainerClient(_containerName);
         var blobClient = containerClient.GetBlobClient(fileName);
 
+
+        await containerClient.CreateIfNotExistsAsync();
+
+        await containerClient.SetAccessPolicyAsync(PublicAccessType.Blob);
         // Upload to Azure Blob Storage
         await blobClient.UploadAsync(fileStream, overwrite: true);
 
@@ -48,8 +53,11 @@ public class PhotoService : IPhotoService
             UserId = userId, // Implement method to get current user ID
             UploadDate = DateTime.UtcNow
         };
+
         _context.Photos.Add(photo);
         await _context.SaveChangesAsync();
+
+        return photo;
     }
 
     public async Task DeletePhotoAsync(int photoId)
@@ -68,6 +76,6 @@ public class PhotoService : IPhotoService
         }
     }
 
-   
+
 
 }

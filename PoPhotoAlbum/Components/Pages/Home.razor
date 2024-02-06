@@ -18,12 +18,12 @@
                 <MudCardMedia Image="@photo.Url" />
                 <MudCardContent>
                     <MudText Typo="Typo.h6">@photo.FileName</MudText>
-                    </MudCardContent>
-                    <MudCardActions>
-                        <MudButton Color="Color.Error" OnClick="() => DeletePhoto(photo)">Delete</MudButton>
-                    </MudCardActions>
-                </MudCard>
-            </MudItem>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Color="Color.Error" OnClick="() => DeletePhoto(photo)">Delete</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
     }
 </MudGrid>
 
@@ -63,7 +63,10 @@
             }
 
             using var stream = file.OpenReadStream(104857600);
-            await PhotoService.UploadPhotoAsync(stream, file.Name, UserId);
+            Photo uploadedPhoto = await PhotoService.UploadPhotoAsync(stream, file.Name, UserId);
+
+            photos.Add(uploadedPhoto); // Update the photos list
+            StateHasChanged(); // Request the UI to re-render
         }
     }
 
@@ -85,4 +88,3 @@
         }
     }
 }
-
